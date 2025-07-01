@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:pet_adoption/controllers/favourite_button_controller.dart';
 import 'package:pet_adoption/models/pet.dart';
+import 'package:confetti/confetti.dart';
+import 'package:pet_adoption/widgets/favourite_button.dart';
 
 class PetDetailsSheet extends StatelessWidget {
   final Pet pet;
@@ -8,6 +12,12 @@ class PetDetailsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Confetti controller
+    final ConfettiController _confettiController =
+        ConfettiController(duration: const Duration(seconds: 3));
+    final PetControllerFavourite favController =
+        Get.put(PetControllerFavourite());
+
     return DraggableScrollableSheet(
       shouldCloseOnMinExtent: true,
       initialChildSize: 1,
@@ -25,6 +35,7 @@ class PetDetailsSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Drag handle
+
                     Container(
                       width: 40,
                       height: 4,
@@ -36,16 +47,25 @@ class PetDetailsSheet extends StatelessWidget {
                     ),
 
                     // Pet name
-                    Text(
-                      pet.name,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          pet.breeds[0].name,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: FavoriteButton(petId: pet.id), // or pet.id
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
 
-                    // Pet image with Interactive Viewer
+                    // Pet image
                     Center(
                       child: GestureDetector(
                         onTap: () {
@@ -61,7 +81,7 @@ class PetDetailsSheet extends StatelessWidget {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
                                     child: Image.network(
-                                      pet.imageUrl,
+                                      pet.url,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -73,7 +93,7 @@ class PetDetailsSheet extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Image.network(
-                            pet.imageUrl,
+                            pet.url,
                             height: 200,
                             fit: BoxFit.cover,
                           ),
@@ -84,12 +104,12 @@ class PetDetailsSheet extends StatelessWidget {
 
                     // Pet details
                     Text(
-                      'Age: ${pet.age}',
+                      'Age: 4',
                       style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Price: \$${pet.price}',
+                      'Price: \$100',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -97,15 +117,55 @@ class PetDetailsSheet extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(pet.description),
+
                     const SizedBox(height: 16),
 
                     // Adopt Me button
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('You adopted ${pet.name}!')),
+                          _confettiController
+                              .play(); // Start confetti animation
+
+                          // Show the popup dialog without dismissing the bottom sheet
+                          showDialog(
+                            context: context,
+                            barrierColor:
+                                Colors.transparent, // Keep the sheet visible
+                            builder: (context) {
+                              return Stack(
+                                children: [
+                                  // Confetti widget
+                                  ConfettiWidget(
+                                    numberOfParticles: 10,
+                                    confettiController: _confettiController,
+                                    blastDirectionality:
+                                        BlastDirectionality.explosive,
+                                    shouldLoop: false,
+                                    colors: const [
+                                      Colors.red,
+                                      Colors.green,
+                                      Colors.blue,
+                                      Colors.orange,
+                                      Colors.purple,
+                                    ],
+                                  ),
+                                  AlertDialog(
+                                    title: const Text("Congratulations!"),
+                                    content: Text(
+                                        "You’ve now adopted ${pet.breeds[0].name}!"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text("OK"),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -124,35 +184,6 @@ class PetDetailsSheet extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
-              ),
-
-              // Favorite button in the top-right corner
-              Positioned(
-                top: 16,
-                right: 16,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text('${pet.name} added to favorites!')),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    backgroundColor: Colors.redAccent,
-                  ),
-                  icon: const Icon(Icons.favorite, color: Colors.white),
-                  label: const Text(
-                    'Favorite',
-                    style: TextStyle(fontSize: 14),
-                  ),
                 ),
               ),
             ],
