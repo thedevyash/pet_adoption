@@ -27,9 +27,6 @@ class _FavouritePetsScreenState extends State<FavouritePetsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Favourite Pets"),
-      ),
       body: Obx(() {
         if (favController.favorites.isEmpty) {
           return const Center(
@@ -72,7 +69,10 @@ class _FavouritePetsScreenState extends State<FavouritePetsScreen> {
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(16)),
                   ),
-                  builder: (_) => PetDetailsSheet(pet: pet),
+                  builder: (_) => PetDetailsSheet(
+                    pet: pet,
+                    heroTag: 'favorite_pet_${pet.id}', // Pass the Hero tag
+                  ),
                 );
               },
               child: Container(
@@ -102,18 +102,21 @@ class _FavouritePetsScreenState extends State<FavouritePetsScreen> {
                     Expanded(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          pet.url.isNotEmpty ? pet.url : '',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Center(
-                              child: Icon(
-                                Icons.broken_image,
-                                color: Colors.grey,
-                                size: 50,
-                              ),
-                            );
-                          },
+                        child: Hero(
+                          tag: 'favorite_pet_${pet.id}', // Unique Hero tag
+                          child: Image.network(
+                            pet.url.isNotEmpty ? pet.url : '',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Icon(
+                                  Icons.broken_image,
+                                  color: Colors.grey,
+                                  size: 50,
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
