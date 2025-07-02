@@ -27,6 +27,7 @@ class _FavouritePetsScreenState extends State<FavouritePetsScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Theme.of(context).canvasColor,
         body: Obx(() {
           if (favController.favorites.isEmpty) {
             return const Center(

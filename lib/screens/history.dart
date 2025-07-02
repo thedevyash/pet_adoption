@@ -19,6 +19,7 @@ class _AdoptedPetsScreenState extends State<AdoptedPetsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).canvasColor,
       body: Obx(() {
         if (petController.adoptedPets.isEmpty) {
           return const Center(
