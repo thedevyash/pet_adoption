@@ -8,6 +8,7 @@ import 'package:pet_adoption/controllers/favourite_button_controller.dart';
 import 'package:pet_adoption/controllers/pet_controller.dart';
 import 'package:pet_adoption/controllers/theme_controller.dart';
 import 'package:pet_adoption/screens/favourites.dart';
+import 'package:pet_adoption/screens/history.dart';
 
 import 'package:pet_adoption/widgets/Containers.dart';
 
@@ -53,72 +54,72 @@ class _HomeScreenState extends State<HomeScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      extendBody: true,
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Text(
-          _getAppBarTitle(),
-          style: textStyle.title,
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.brightness_6),
-            onPressed: () {
-              final controller = Get.find<ThemeController>();
-              controller.toggleTheme();
-            },
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Theme.of(context).canvasColor,
+        extendBody: true,
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: Text(
+            _getAppBarTitle(),
+            style: textStyle.title,
           ),
-          IconButton(
-            icon: const Icon(Icons.refresh), // Add a refresh icon
-            onPressed: () {
-              _refreshPets(); // Re-hit the API to restore the original results
-            },
-          ),
-        ],
-      ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        children: [
-          _buildHomeScreen(screenWidth, screenHeight),
-          FavouritePetsScreen(allPets: getPetsController.filteredPetList),
-          const Center(
-            child: Text(
-              "History Screen (To be implemented)",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.brightness_6),
+              onPressed: () {
+                final controller = Get.find<ThemeController>();
+                controller.toggleTheme();
+              },
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: CrystalNavigationBar(
-          backgroundColor: Colors.black,
-          selectedItemColor: const Color(0xffFA812F),
-          unselectedItemColor: Colors.blueGrey,
-          currentIndex: _currentIndex,
-          onTap: (index) {
+            IconButton(
+              icon: const Icon(Icons.refresh), // Add a refresh icon
+              onPressed: () {
+                _refreshPets(); // Re-hit the API to restore the original results
+              },
+            ),
+          ],
+        ),
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
             setState(() {
               _currentIndex = index;
             });
-            _pageController.jumpToPage(index);
           },
-          items: [
-            CrystalNavigationBarItem(
-              icon: Icons.home_rounded,
-            ),
-            CrystalNavigationBarItem(
-              icon: Icons.favorite_rounded,
-            ),
-            CrystalNavigationBarItem(
-              icon: Icons.history,
-            ),
+          children: [
+            _buildHomeScreen(screenWidth, screenHeight),
+            FavouritePetsScreen(allPets: getPetsController.filteredPetList),
+            AdoptedPetsScreen(
+              allPets: getPetsController.filteredPetList,
+            )
           ],
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: CrystalNavigationBar(
+            backgroundColor: Colors.black,
+            selectedItemColor: const Color(0xffFA812F),
+            unselectedItemColor: Colors.blueGrey,
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+              _pageController.jumpToPage(index);
+            },
+            items: [
+              CrystalNavigationBarItem(
+                icon: Icons.home_rounded,
+              ),
+              CrystalNavigationBarItem(
+                icon: Icons.favorite_rounded,
+              ),
+              CrystalNavigationBarItem(
+                icon: Icons.history,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -131,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         return "Favourite Pets"; // Favourites screen title
       case 2:
-        return "History"; // History screen title
+        return "Adopted Pets"; // History screen title
       default:
         return "Pet Adoption";
     }
@@ -213,8 +214,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                final pets = getPetsController
-                    .filteredPetList; // Observe the filtered list reactively
+                final pets = getPetsController.filteredPetList;
+
+                if (pets.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image(
+                          height: 35,
+                          image: AssetImage("assets/noresult.png"),
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Text("Uh-oh no pets found !")
+                      ],
+                    ),
+                  );
+                }
                 return GridView.builder(
                   itemCount: pets.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -237,6 +256,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           if (!isAdopted) {
                             showModalBottomSheet(
+                              // backgroundColor: Theme.of(context).cardColor,
+                              // barrierColor: color,
+                              useSafeArea: true,
                               enableDrag: true,
                               isScrollControlled: true,
                               context: context,
@@ -256,7 +278,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           decoration: BoxDecoration(
                             color: isAdopted
                                 ? Colors.grey[300]
-                                : color, // Grey out if adopted
+                                : Theme.of(context)
+                                    .cardColor, // Grey out if adopted
                             borderRadius: BorderRadius.circular(16),
                           ),
                           padding: const EdgeInsets.all(8),
