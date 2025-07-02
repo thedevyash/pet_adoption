@@ -12,8 +12,6 @@ class PetController extends GetxController {
   var filteredPetList = <Pet>[].obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
-
-  // List to track adopted pets
   var adoptedPets = <String>[].obs;
 
   Future<void> loadPets({required int page, required int limit}) async {
@@ -45,29 +43,25 @@ class PetController extends GetxController {
     }
   }
 
-  // Toggle adoption state
   void toggleAdoption(String petId) {
     if (adoptedPets.contains(petId)) {
-      adoptedPets.remove(petId); // Mark as not adopted
+      adoptedPets.remove(petId);
     } else {
-      adoptedPets.add(petId); // Mark as adopted
+      adoptedPets.add(petId);
     }
     saveAdoptionState();
-    update(); // Save state to persistent storage
+    update();
   }
 
-  // Check if a pet is adopted
   bool isAdopted(String petId) {
     return adoptedPets.contains(petId);
   }
 
-  // Save adoption state to SharedPreferences
   Future<void> saveAdoptionState() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('adoptedPets', adoptedPets);
   }
 
-  // Load adoption state from SharedPreferences
   Future<void> loadAdoptionState() async {
     final prefs = await SharedPreferences.getInstance();
     adoptedPets.value = prefs.getStringList('adoptedPets') ?? [];

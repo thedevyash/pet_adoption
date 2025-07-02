@@ -28,8 +28,8 @@ class ImageZoomView extends StatelessWidget {
           child: InteractiveViewer(
             panEnabled: true, // Enable panning
             boundaryMargin: const EdgeInsets.all(20),
-            minScale: 1.0, // Minimum zoom scale
-            maxScale: 4.0, // Maximum zoom scale
+            minScale: 1.0,
+            maxScale: 4.0,
             child: Image.network(
               imageUrl,
               fit: BoxFit.contain,

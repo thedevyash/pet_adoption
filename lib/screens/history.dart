@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pet_adoption/constants/fonts.dart';
 import '../controllers/pet_controller.dart';
 import '../models/pet.dart';
 import '../widgets/pet_detail_sheet.dart';
 
 class AdoptedPetsScreen extends StatefulWidget {
-  final List<Pet> allPets; // Pass the list of all pets from the main screen
+  final List<Pet> allPets;
 
   const AdoptedPetsScreen({super.key, required this.allPets});
 
@@ -30,7 +29,6 @@ class _AdoptedPetsScreenState extends State<AdoptedPetsScreen> {
           );
         }
 
-        // Filter adopted pets
         List<Pet> adoptedPets = widget.allPets
             .where((pet) => petController.adoptedPets.contains(pet.id))
             .toList();
@@ -44,15 +42,13 @@ class _AdoptedPetsScreenState extends State<AdoptedPetsScreen> {
           );
         }
 
-        // Get screen width
         final screenWidth = MediaQuery.of(context).size.width;
 
-        // Determine the number of columns based on screen width
         final crossAxisCount = screenWidth < 600
-            ? 2 // Mobile: 2 columns
+            ? 2
             : screenWidth < 900
-                ? 3 // Tablet: 3 columns
-                : 4; // Desktop: 4 columns
+                ? 3
+                : 4;
 
         return GridView.builder(
           padding: const EdgeInsets.all(8),
@@ -78,7 +74,7 @@ class _AdoptedPetsScreenState extends State<AdoptedPetsScreen> {
                   ),
                   builder: (_) => PetDetailsSheet(
                     pet: pet,
-                    heroTag: 'adopted_pet_${pet.id}', // Pass the Hero tag
+                    heroTag: 'adopted_pet_${pet.id}',
                   ),
                 );
               },
@@ -91,7 +87,7 @@ class _AdoptedPetsScreenState extends State<AdoptedPetsScreen> {
                       color: Colors.grey.withOpacity(0.2),
                       spreadRadius: 2,
                       blurRadius: 5,
-                      offset: const Offset(0, 3), // Shadow position
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -102,7 +98,7 @@ class _AdoptedPetsScreenState extends State<AdoptedPetsScreen> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Hero(
-                          tag: 'adopted_pet_${pet.id}', // Unique Hero tag
+                          tag: 'adopted_pet_${pet.id}',
                           child: Image.network(
                             pet.url.isNotEmpty ? pet.url : '',
                             fit: BoxFit.cover,

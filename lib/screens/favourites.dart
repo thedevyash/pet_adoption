@@ -5,7 +5,7 @@ import '../models/pet.dart';
 import '../widgets/pet_detail_sheet.dart';
 
 class FavouritePetsScreen extends StatefulWidget {
-  final List<Pet> allPets; // Pass the list of all pets from the main screen
+  final List<Pet> allPets;
 
   const FavouritePetsScreen({super.key, required this.allPets});
 
@@ -20,8 +20,7 @@ class _FavouritePetsScreenState extends State<FavouritePetsScreen> {
   @override
   void initState() {
     super.initState();
-    favController
-        .loadFavoritesFromStorage(); // Initialize the favorite pets list
+    favController.loadFavoritesFromStorage();
   }
 
   @override
@@ -38,7 +37,6 @@ class _FavouritePetsScreenState extends State<FavouritePetsScreen> {
             );
           }
 
-          // Filter favorite pets
           List<Pet> favoritePets = widget.allPets
               .where((pet) => favController.favorites.contains(pet.id))
               .toList();
@@ -52,15 +50,13 @@ class _FavouritePetsScreenState extends State<FavouritePetsScreen> {
             );
           }
 
-          // Get screen width
           final screenWidth = MediaQuery.of(context).size.width;
 
-          // Determine the number of columns based on screen width
           final crossAxisCount = screenWidth < 600
-              ? 2 // Mobile: 2 columns
+              ? 2
               : screenWidth < 900
-                  ? 3 // Tablet: 3 columns
-                  : 4; // Desktop: 4 columns
+                  ? 3
+                  : 4;
 
           return GridView.builder(
             padding: const EdgeInsets.all(8),
@@ -87,7 +83,7 @@ class _FavouritePetsScreenState extends State<FavouritePetsScreen> {
                     ),
                     builder: (_) => PetDetailsSheet(
                       pet: pet,
-                      heroTag: 'favorite_pet_${pet.id}', // Pass the Hero tag
+                      heroTag: 'favorite_pet_${pet.id}',
                     ),
                   );
                 },
@@ -103,7 +99,7 @@ class _FavouritePetsScreenState extends State<FavouritePetsScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Hero(
-                            tag: 'favorite_pet_${pet.id}', // Unique Hero tag
+                            tag: 'favorite_pet_${pet.id}',
                             child: Image.network(
                               pet.url.isNotEmpty ? pet.url : '',
                               fit: BoxFit.cover,

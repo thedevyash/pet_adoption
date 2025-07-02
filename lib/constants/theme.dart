@@ -10,10 +10,10 @@ final ThemeData lightTheme = ThemeData(
   ),
   cardColor: const Color(0xffFEF3E2),
   progressIndicatorTheme: const ProgressIndicatorThemeData(
-    color: Color(0xffFA812F), // Set progress indicator color to match the theme
+    color: Color(0xffFA812F),
   ),
   bottomSheetTheme: const BottomSheetThemeData(
-    backgroundColor: Colors.white, // Light mode bottom sheet background
+    backgroundColor: Colors.white,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
@@ -29,10 +29,10 @@ final ThemeData darkTheme = ThemeData(
   ),
   cardColor: const Color(0xff333333),
   progressIndicatorTheme: const ProgressIndicatorThemeData(
-    color: Color(0xffFA812F), // Set progress indicator color to match the theme
+    color: Color(0xffFA812F),
   ),
   bottomSheetTheme: const BottomSheetThemeData(
-    backgroundColor: Color(0xff121212), // Dark mode bottom sheet background
+    backgroundColor: Color(0xff121212),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),

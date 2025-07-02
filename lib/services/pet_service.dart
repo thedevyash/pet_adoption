@@ -4,8 +4,6 @@ import 'package:pet_adoption/constants/constant.dart';
 import '../models/pet.dart';
 
 class PetService {
-  // Replace with your actual base URL
-
   Future<List<Pet>> fetchPets({
     required int page,
     required int limit,

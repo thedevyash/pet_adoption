@@ -13,7 +13,6 @@ class Pet {
     required this.height,
   });
 
-  // Factory constructor to create a Pet object from JSON
   factory Pet.fromJson(Map<String, dynamic> json) {
     return Pet(
       breeds: json['breeds'] != null
@@ -26,7 +25,6 @@ class Pet {
     );
   }
 
-  // Method to convert a Pet object to JSON
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['breeds'] = breeds.map((v) => v.toJson()).toList();
@@ -49,7 +47,6 @@ class Breeds {
     required this.description,
   });
 
-  // Factory constructor to create a Breeds object from JSON
   factory Breeds.fromJson(Map<String, dynamic> json) {
     return Breeds(
       id: json['id'] ?? '',
@@ -58,7 +55,6 @@ class Breeds {
     );
   }
 
-  // Method to convert a Breeds object to JSON
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;

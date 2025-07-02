@@ -39,8 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final petRepository = PetRepository(petService);
 
     getPetsController = Get.put(PetController(petRepository));
-
-    // Load initial pets
     getPetsController.loadPets(page: 0, limit: 10);
   }
 
@@ -50,7 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen width and height
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -73,9 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.refresh), // Add a refresh icon
+              icon: const Icon(Icons.refresh),
               onPressed: () {
-                _refreshPets(); // Re-hit the API to restore the original results
+                _refreshPets();
               },
             ),
           ],
@@ -128,11 +125,11 @@ class _HomeScreenState extends State<HomeScreen> {
   String _getAppBarTitle() {
     switch (_currentIndex) {
       case 0:
-        return "Find your buddy :)"; // Home screen title
+        return "Find your buddy :)";
       case 1:
-        return "Favourite Pets"; // Favourites screen title
+        return "Favourite Pets";
       case 2:
-        return "Adopted Pets"; // History screen title
+        return "Adopted Pets";
       default:
         return "Pet Adoption";
     }
@@ -143,7 +140,6 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          // Search Bar
           TextField(
             controller: _searchController,
             decoration: InputDecoration(
@@ -168,10 +164,8 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           const SizedBox(height: 8),
-
-          // Categories
           SizedBox(
-            height: screenHeight * 0.15, // Adjust height based on screen size
+            height: screenHeight * 0.15,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
@@ -203,8 +197,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 15),
-
-          // Pet Grid
           Expanded(
             child: RefreshIndicator(
               edgeOffset: 1000,
@@ -217,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 final pets = getPetsController.filteredPetList;
 
                 if (pets.isEmpty) {
-                  return Center(
+                  return const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -237,27 +229,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 return GridView.builder(
                   itemCount: pets.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: screenWidth < 600
-                        ? 2
-                        : 3, // Adjust columns based on screen width
+                    crossAxisCount: screenWidth < 600 ? 2 : 3,
                     mainAxisSpacing: 8,
                     crossAxisSpacing: 8,
                     childAspectRatio: 0.8,
                   ),
                   itemBuilder: (context, index) {
                     final pet = pets[index];
-                    final color = Theme.of(context).cardColor;
 
-                    // Wrap only the part that depends on `isAdopted` in Obx
                     return Obx(() {
-                      final isAdopted = getPetsController
-                          .isAdopted(pet.id); // Check adoption state reactively
+                      final isAdopted = getPetsController.isAdopted(pet.id);
                       return GestureDetector(
                         onTap: () {
                           if (!isAdopted) {
                             showModalBottomSheet(
-                              // backgroundColor: Theme.of(context).cardColor,
-                              // barrierColor: color,
                               useSafeArea: true,
                               enableDrag: true,
                               isScrollControlled: true,
@@ -268,8 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               builder: (_) => PetDetailsSheet(
                                 pet: pet,
-                                heroTag:
-                                    'pet_${pet.id}', // Pass the Hero tag to the details screen
+                                heroTag: 'pet_${pet.id}',
                               ),
                             );
                           }
@@ -278,8 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           decoration: BoxDecoration(
                             color: isAdopted
                                 ? Colors.grey[300]
-                                : Theme.of(context)
-                                    .cardColor, // Grey out if adopted
+                                : Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           padding: const EdgeInsets.all(8),
@@ -289,8 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(18),
                                   child: Hero(
-                                    tag:
-                                        'pet_${pet.id}', // Unique Hero tag for each pet
+                                    tag: 'pet_${pet.id}',
                                     child: Stack(
                                       children: [
                                         Image.network(
